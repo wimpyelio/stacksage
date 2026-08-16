@@ -1,5 +1,6 @@
 """StackSage Streamlit UI — full implementation."""
 import os, time
+from pathlib import Path
 import httpx
 import streamlit as st
 
@@ -57,7 +58,7 @@ with st.sidebar:
     top_k         = st.slider("Sources to retrieve", 1, 10, 5)
     st.divider()
 
-    st.markdown(f"[📊 Open Grafana Dashboard]({GRAFANA})", unsafe_allow_html=True)
+    st.caption("📊 Monitoring: see Evaluate tab above")
     st.divider()
 
     if st.button("Refresh metrics"):
@@ -161,11 +162,11 @@ with tab_eval:
         with st.spinner("Evaluating… this takes a few minutes"):
             try:
                 from dotenv import load_dotenv; load_dotenv()
-                from ingestion.embed_and_index import get_qdrant, get_es, get_embedder
+                from ingestion.embed_and_index import get_qdrant, get_embedder
                 from rag.retriever import HybridRetriever
                 from evaluation.evaluate import evaluate_retrieval
 
-                retriever = HybridRetriever(get_qdrant(), get_es(), get_embedder())
+                retriever = HybridRetriever(get_qdrant(), get_embedder())
                 results   = evaluate_retrieval(
                     "data/eval/ground_truth.jsonl", retriever, n=n_q
                 )

@@ -157,9 +157,9 @@ if __name__ == "__main__":
     OUT = Path(args.output)
 
     if args.mode in ("retrieval","both"):
-        from ingestion.embed_and_index import get_qdrant, get_es, get_embedder
+        from ingestion.embed_and_index import get_qdrant, get_embedder
         from rag.retriever import HybridRetriever
-        retriever = HybridRetriever(get_qdrant(), get_es(), get_embedder())
+        retriever = HybridRetriever(get_qdrant(), get_embedder())
         evaluate_retrieval(args.ground_truth, retriever, args.n_questions)
 
     if args.mode in ("generation","both"):
