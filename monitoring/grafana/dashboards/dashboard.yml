@@ -1,0 +1,6 @@
+apiVersion: 1
+providers:
+  - name: StackSage
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards
