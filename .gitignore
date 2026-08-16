@@ -15,3 +15,11 @@ dist/
 build/
 .venv/
 venv/
+.env
+.env
+data/bm25_index.pkl
+data/stacksage.db
+data/eval/
+data/raw/
+data/processed/
+data/qdrant_storage/
