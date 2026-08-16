@@ -203,7 +203,12 @@ with tab_eval:
 # ═════════════════════════════════════════════════════════════════════════════
 with tab_pipeline:
     st.header("7-Stage RAG Pipeline")
-    st.code(PIPELINE_DIAGRAM, language=None)
+    from pathlib import Path as _P
+    img = _P("assets/architecture.png")
+    if img.exists():
+        st.image(str(img), caption="StackSage RAG Architecture", use_column_width=True)
+    else:
+        st.code(PIPELINE_DIAGRAM, language=None)
     st.markdown("""
 | Stage | Component | Detail |
 |-------|-----------|--------|
