@@ -222,7 +222,6 @@ stacksage/
 
 ### Sources & Timings
 <img width="1009" height="670" alt="image" src="/assets/source.png">
-<img width="1283" height="231" alt="image" src="/assets/subquery.png" />
 <img alt="image" src="/assets/timings'.png">
 
 ### Retrieval Evaluation
