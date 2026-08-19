@@ -112,6 +112,7 @@ flowchart TD
     G -.-> EP2
     EP3 -.-> EP1
     EP3 -.-> EP2
+```
 
 The retriever implementation uses `rank_bm25` for lexical search and Qdrant's local client for dense search. RRF uses `1 / (60 + rank)` and merges documents by `doc_id`. Retrieval filters include minimum question score, optional tags, and an optional creation-date boundary.
 
