@@ -64,15 +64,11 @@ flowchart TD
     end
 
     D["3. RRF Fusion\nReciprocal Rank Fusion k=60\nmerge & score candidates"]
-
     E["4. Cross-Encoder Reranker\nms-marco-MiniLM-L-6-v2 reranks\ntop candidate passages"]
-
     F["5. Answer Generator\nLLM generates a grounded answer\nfrom top-ranked sources"]
-
     G["6. LLM-as-Judge\nScores answer on Relevance,\nAccuracy & Completeness 1-5"]
-
     H["7. Response\nAnswer, Sources, Scores, Timings,\nRewritten Queries, Judge Scores"]
-
+    
     subgraph "What the user sees (UI)"
         UI1["Answer\nLLM generated answer"]
         UI2["Sources\nTop questions with score, tags, and links"]
