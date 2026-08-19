@@ -57,49 +57,45 @@ flowchart TD
     A["Developer Question\n(natural language)"] --> B
 
     %% Stage 1: Query Processing
-    B["1. Query Rewriter\nLLM generates 2-3 search queries\nto improve recall"] --> C2a
-    B --> C2b
-    B --> C2c
+    B["1. Query Rewriter\nLLM generates 2-3 search queries\nto improve recall"]
 
     %% Stage 2: Retrieval
-    C2a["2a. BM25 Retrieval\nrank_bm25 over Stack Exchange questions"]
-    C2b["2b. Dense Retrieval\nSentence-Transformers embedding\nsearch on Qdrant vector DB"]
-    C2c["2c. Metadata Filters\nFilter by tags, minimum score,\nand optional date"]
-    C2a --> D
-    C2b --> D
-    C2c --> D
+    subgraph "Retrieval"
+        C2a["2a. BM25 Retrieval\nrank_bm25 over Stack Exchange questions"]
+        C2b["2b. Dense Retrieval\nSentence-Transformers embedding\nsearch on Qdrant vector DB"]
+        C2c["2c. Metadata Filters\nFilter by tags, minimum score,\nand optional date"]
+    end
 
     %% Stage 3: Fusion
-    D["3. RRF Fusion\nReciprocal Rank Fusion k=60\nmerge & score candidates"] --> E
+    D["3. RRF Fusion\nReciprocal Rank Fusion k=60\nmerge & score candidates"]
 
     %% Stage 4: Reranking
-    E["4. Cross-Encoder Reranker\nms-marco-MiniLM-L-6-v2 reranks\ntop candidate passages"] --> F
+    E["4. Cross-Encoder Reranker\nms-marco-MiniLM-L-6-v2 reranks\ntop candidate passages"]
 
     %% Stage 5: Generation
-    F["5. Answer Generator\nLLM generates a grounded answer\nfrom top-ranked sources"] --> G
+    F["5. Answer Generator\nLLM generates a grounded answer\nfrom top-ranked sources"]
 
     %% Stage 6: Evaluation
-    G["6. LLM-as-Judge\nScores answer on Relevance,\nAccuracy & Completeness 1-5"] --> H
+    G["6. LLM-as-Judge\nScores answer on Relevance,\nAccuracy & Completeness 1-5"]
 
     %% Stage 7: Output
     H["7. Response\nAnswer, Sources, Scores, Timings,\nRewritten Queries, Judge Scores"]
 
     %% UI
     subgraph "What the user sees (UI)"
-        H --> UI1["Answer\nLLM generated answer"]
-        H --> UI2["Sources\nTop questions with score, tags, and links"]
-        H --> UI3["Rewritten Queries\nQueries used for retrieval"]
-        H --> UI4["Judge Scores\nRelevance / Accuracy / Completeness"]
-        H --> UI5["Timings\nPer-stage latency (ms)"]
-        H --> UI6["Feedback\nUser feedback stored for improvement"]
+        UI1["Answer\nLLM generated answer"]
+        UI2["Sources\nTop questions with score, tags, and links"]
+        UI3["Rewritten Queries\nQueries used for retrieval"]
+        UI4["Judge Scores\nRelevance / Accuracy / Completeness"]
+        UI5["Timings\nPer-stage latency (ms)"]
+        UI6["Feedback\nUser feedback stored for improvement"]
     end
 
     %% Evaluation Pipeline
     subgraph "Evaluation Pipeline"
-        D -.-> EP1["Retrieval Evaluation\nHit@5, Hit@10, MRR\nBM25, Dense, Hybrid"]
-        G -.-> EP2["Generation Evaluation\nLLM-as-Judge scores\nRelevance, Accuracy, Completeness"]
-        EP3["Benchmark Dataset\nGround truth from Stack Overflow\nquestion_id"] -.-> EP1
-        EP3 -.-> EP2
+        EP1["Retrieval Evaluation\nHit@5, Hit@10, MRR\nBM25, Dense, Hybrid"]
+        EP2["Generation Evaluation\nLLM-as-Judge scores\nRelevance, Accuracy, Completeness"]
+        EP3["Benchmark Dataset\nGround truth from Stack Overflow\nquestion_id"]
     end
 
     %% Infra & Data Layer
@@ -110,6 +106,28 @@ flowchart TD
         ID4["Models\nOpenAI-compatible or Ollama"]
         ID5["Optional Monitoring\nGrafana (Docker Compose)"]
     end
+
+    %% Connections
+    B --> C2a
+    B --> C2b
+    B --> C2c
+    C2a --> D
+    C2b --> D
+    C2c --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> UI1
+    H --> UI2
+    H --> UI3
+    H --> UI4
+    H --> UI5
+    H --> UI6
+    D -.-> EP1
+    G -.-> EP2
+    EP3 -.-> EP1
+    EP3 -.-> EP2
 
 The retriever implementation uses `rank_bm25` for lexical search and Qdrant's local client for dense search. RRF uses `1 / (60 + rank)` and merges documents by `doc_id`. Retrieval filters include minimum question score, optional tags, and an optional creation-date boundary.
 
